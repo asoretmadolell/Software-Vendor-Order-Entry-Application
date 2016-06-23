@@ -14,4 +14,65 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="STDDEFS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PROJUTIL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ORDENTRY.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ORDENTRY.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ORDBUILD.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GET_ADDR.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PNT_ID_C.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PNT_SHIP.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="STUBS.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PROMPT.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NPROMPT.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FPROMPT.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TPUT.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NTPUT.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BEG_SCRN.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FTPUT.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MATCH.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="STRRJUST.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ERR_WARN.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>

@@ -78,6 +78,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ORDENTRY.c" />
+    <ClCompile Include="ORDBUILD.c" />
+    <ClCompile Include="GET_ADDR.c" />
+    <ClCompile Include="PNT_ID_C.c" />
+    <ClCompile Include="PNT_SHIP.c" />
+    <ClCompile Include="PROMPT.c" />
+    <ClCompile Include="NPROMPT.c" />
+    <ClCompile Include="FPROMPT.c" />
+    <ClCompile Include="NTPUT.c" />
+    <ClCompile Include="FTPUT.c" />
+    <ClCompile Include="BEG_SCRN.c" />
+    <ClCompile Include="MATCH.c" />
+    <ClCompile Include="ERR_WARN.c" />
+    <ClCompile Include="STRRJUST.c" />
+    <ClCompile Include="TPUT.c" />
+    <ClCompile Include="STUBS.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ORDENTRY.h" />
+    <ClInclude Include="PROJUTIL.h" />
+    <ClInclude Include="STDDEFS.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
