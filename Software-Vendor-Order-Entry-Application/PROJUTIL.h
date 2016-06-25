@@ -29,3 +29,34 @@
 /*    logentry()    Append message text to log file.                         */
 /*                                                                           */
 /*****************************************************************************/
+
+#ifndef IMPORT          /* If IMPORT is not already #defined, then do it now. */
+#define IMPORT extern
+#endif
+
+/*****************************************************************************/
+/* Type stepcode is a synonym data type defined below. The typedef statement */
+/* makes stepcode equivalent to type char. Type stepcode declares return     */
+/* values from the functions prompt(), nprompt(), and fprompt().             */
+/*****************************************************************************/
+typedef char stepcode;
+
+/*****************************************************************************/
+/* These are the possible return values from prompt() that a variable with   */
+/* synonym type stepcode may take.                                           */
+/*****************************************************************************/
+#define STEPOK 0        /* Data were entered; may be null if OPT. */
+#define STEPBACK 1      /* C_BACK was entered; back up a prompt. */
+#define STEPCANC 2      /* C_CANC was entered; cancel transaction. */
+
+/*****************************************************************************/
+/* Note this statement:                                                      */
+/*    enum stepcode { STEPOK, STEPBACK, STEPCANC }                           */
+/* This enumeration does almost the same job as the typedef synonym type     */
+/* stepcode and the symbols STEPOK, STEPBACK, and STEPCANC. The difference   */
+/* is that a variable of synonym type stepcode is not an enumerated constant */
+/* and so may be incremented and decremented. The increment and decrement    */
+/* operators are used here to compute the next step to perform. At some      */
+/* future time, ANSI may decide to permit ++ and -- on enumerated type       */
+/* variables                                                                 */
+/*****************************************************************************/

@@ -32,3 +32,25 @@
 /*    allow examination or modification of those data.                       */
 /*                                                                           */
 /*****************************************************************************/
+#define GLOBAL
+#define SEMIGLOBAL static
+#define IMPORT extern
+
+/*****************************************************************************/
+/* Data types that are synonyms of other types.                              */
+/*****************************************************************************/
+typedef unsigned char unchar;       /* unsigned characters */
+typedef unsigned short unshort;     /* unsigned short integers */
+typedef unsigned long unlong;       /* unisgned long integers */
+typedef char byte;                  /* byte: 1-byte number (0 to 127) */
+typedef char bflag;                 /* blag: 1-byte true/false flag */
+typedef int flag;                   /* flag: int-sized true/false flag */
+
+/*****************************************************************************/
+/* Constants for true or false data, to be used in conjunction with synonym  */
+/* types flag (int sized) and bflag (char sized).                            */
+/*****************************************************************************/
+#ifndef YES     /* If not already defined, then define YES, NO. */
+#define YES 1
+#define NO 0
+#endif
