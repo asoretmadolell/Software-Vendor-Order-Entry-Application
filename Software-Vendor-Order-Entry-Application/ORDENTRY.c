@@ -29,7 +29,7 @@
 /*****************************************************************************/
 GLOBAL bflag bell_ok = YES;     /* It's OK to ring bell. */
 
-main( )
+main()
 {
     /*****************************************************************************/
     /* Declare subfunction return and parameter types.                           */
@@ -54,7 +54,7 @@ main( )
         switch( step )
         {
             case ID_USER:                           /* Identify user (salesperson). */
-                step_rtn = id_user( );
+                step_rtn = id_user();
                 break;
             case ID_CUST:                           /* Identify customer. */
                 step_rtn = id_cust( step_rtn );
@@ -66,7 +66,7 @@ main( )
                 step_rtn = ship_pay( step_rtn );
                 break;
             case WRT_ORD:                           /* Write order; update files. */
-                step_rtn = wrt_ord( );
+                step_rtn = wrt_ord();
                 break;
         }
 
