@@ -67,6 +67,7 @@ IMPORT void         logentry( char[] );
 #define PRMTBSIZ    161         /* prompt buffer size */
 #define MAND        1           /* for fifth argument: mandatory input */
 #define OPT         0           /* for fifth argument: optional input */
+#define C_MASK      '_'         /* character to repeat for prompt field */
 
 /*****************************************************************************/
 /* User command characters for prompt().                                     */
