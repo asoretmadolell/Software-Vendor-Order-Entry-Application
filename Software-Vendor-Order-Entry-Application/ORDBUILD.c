@@ -51,6 +51,26 @@ SEMIGLOBAL char resale_id[ L_RESALE_ID + 1 ] = "";
 SEMIGLOBAL char adv_ref[ L_ADV_REF + 1 ] = "";
 
 /*****************************************************************************/
+/* Variables "parts" and "part_descs" are 2-dimensional character arrays.    */
+/*****************************************************************************/
+SEMIGLOBAL char parts[ MAX_ITEMS ][ L_PARTS + 1 ] = { "" };
+SEMIGLOBAL char part_descs[ MAX_ITEMS ][ L_PART_DESC + 1 ] = { "" };
+
+SEMIGLOBAL long quantities[ MAX_ITEMS ] = { 0 };
+SEMIGLOBAL short ship_weights[ MAX_ITEMS ] = { 0 };
+SEMIGLOBAL short tot_weight = 0;
+SEMIGLOBAL money prices[ MAX_ITEMS ] = { 0 };
+SEMIGLOBAL money part_total = 0;
+SEMIGLOBAL char ship_car[ L_SHIP_CAR + 1 ] = "";
+SEMIGLOBAL money ship_amt = 0;
+SEMIGLOBAL double inp_ship_amt = 0.0;
+SEMIGLOBAL double tax_pcnt = 0.0;
+SEMIGLOBAL money tax_amt = 0;
+SEMIGLOBAL char pay_terms[ L_PAY_TERMS + 1 ] = "";
+SEMIGLOBAL char comment[ L_COMMENT + 1 ] = "";
+SEMIGLOBAL byte last_part = 0; /* index of last part on order */
+
+/*****************************************************************************/
 /* Shared data not part of an order.                                         */
 /*****************************************************************************/
 SEMIGLOBAL char scrn_title[] = "*** ENTER NEW ORDER ***";
@@ -314,6 +334,165 @@ stepcode step_rtn;
         else if( step_rtn == STEPBACK )
         {
             --step;                     /* No; back up to last step. */
+        }
+    }
+
+    return( step_rtn );
+}
+
+/*****************************************************************************/
+/*                                                                           */
+/* ord_itms()                                                                */
+/*                                                                           */
+/* Prompts repeatedly for part numbers and quantities of each item ordered   */
+/* by customer. Displays price and shipping weight of each.                  */
+/*                                                                           */
+/*****************************************************************************/
+stepcode ord_itms( step_rtn )
+stepcode step_rtn;
+{
+    IMPORT char user[], office[], scrn_title[];
+    IMPORT char parts[][ L_PARTS + 1 ];
+    IMPORT char part_descs[][ L_PART_DESC + 1 ];
+    IMPORT long quantities[];
+    IMPORT short ship_weights[];
+    IMPORT money prices[];
+    IMPORT byte last_part;
+    IMPORT money part_total;
+    flag inv_find( char[], char[], money*, short* );
+    short step;
+    char dbuf[ 14 ];                                    /* dummy string to pass to ftput() and ntput() */
+    byte ipart, part_cnt;
+    byte row;                                           /* line number on screen */
+    bflag part_found, more_items = YES;                 /* part_found not initialized */
+    enum prompts { PART_NUM, QUANTITY, ENDSTEPS };
+
+    /*****************************************************************************/
+    /* Paint screen.                                                             */
+    /*****************************************************************************/
+    beg_scrn( user, scrn_title, office, "ENTER ITEMS" );
+    tput( 4, 10, "Customer Name" );
+    tput( 4, 30, cust_name );
+    tput( 6, 10, "Company Name" );
+    tput( 6, 30, company );
+    tput( 9, 10, "Part Number      Description" );
+    tput( 9, 59, "Qty  Unit-Price" );
+    tput( 22, 51, "Order Total" );
+
+    /*****************************************************************************/
+    /* Initializer for loop.                                                     */
+    /*****************************************************************************/
+    step = ipart = 0;
+    for( step_rtn = STEPOK; step_rtn != STEPCANC && ipart < MAX_ITEMS && ipart >= 0 && more_items; )
+    {
+        /*****************************************************************************/
+        /* Row to prompt on.                                                         */
+        /*****************************************************************************/
+        row = ipart + 11;
+        switch( step )
+        {
+            /*****************************************************************************/
+            /* Get next part number.                                                     */
+            /*****************************************************************************/
+            case PART_NUM:
+                /*****************************************************************************/
+                /* While part entered and not found.                                         */
+                /*****************************************************************************/
+                do
+                {
+                    step_rtn = prompt( parts[ ipart ], "L", 1, L_PARTS, OPT, row, 10 );
+
+                    /*****************************************************************************/
+                    /* Got a part number and it checks out?                                      */
+                    /*****************************************************************************/
+                    part_found = ( step_rtn == STEPOK ) && inv_find( parts[ ipart ], part_descs[ ipart ], &prices[ ipart ], &ship_weights[ ipart ] );
+
+                    /*****************************************************************************/
+                    /* Check for end of order.                                                   */
+                    /*****************************************************************************/
+                    if( step_rtn == STEPOK && parts[ ipart ][ 0 ] == '\0' )
+                    {
+                        more_items = NO;
+                    }
+                    /*****************************************************************************/
+                    /* If part not found, then tell user.                                        */
+                    /*****************************************************************************/
+                    else if( !part_found && step_rtn == STEPOK )
+                    {
+                        err_warn( "No such part:", parts[ ipart ] );
+                    }
+                    /*****************************************************************************/
+                    /* Show description and price of part.                                       */
+                    /*****************************************************************************/
+                    else if( part_found )
+                    {
+                        tput( row, 27, part_descs[ ipart ] );
+                        tput( row, 64, "$" );
+                        ftput( row, 65, (double)prices[ ipart ] / 100.0, 2, dbuf, L_PRICES );
+
+                        /*****************************************************************************/
+                        /* Default quantity is 1.                                                    */
+                        /*****************************************************************************/
+                        if( !quantities[ ipart ] )
+                        {
+                            quantities[ ipart ] = 1;
+                        }
+                    }
+                }
+                while( step_rtn == STEPOK && !part_found && more_items );
+
+                break;
+
+            /*****************************************************************************/
+            /* Get quantity for part ordered.                                            */
+            /*****************************************************************************/
+            case QUANTITY:
+                step_rtn = nprompt( &quantities[ ipart ], "#", 0L, H_QUANTITY, MAND, row, 59 );
+                break;
+        }
+
+        /*****************************************************************************/
+        /* Update total on screen.                                                   */
+        /*****************************************************************************/
+        if( step_rtn == STEPOK )
+        {
+            /*****************************************************************************/
+            /* Has number of parts on this order increased?                              */
+            /*****************************************************************************/
+            if( ipart > last_part && ipart < MAX_ITEMS && quantities[ ipart ] > 0 )
+            {
+                last_part = ipart;      /* Yes, add another part. */
+            }
+
+            /*****************************************************************************/
+            /* Sum the prices times quantities of parts ordered.                         */
+            /*****************************************************************************/
+            for( part_total = part_cnt = 0; part_cnt <= last_part; ++part_cnt )
+            {
+                part_total += prices[ part_cnt ] * quantities[ part_cnt ];
+            }
+            tput( 22, 64, "$" );
+            ftput( 22, 65, (double)part_total / 100.0, 2, dbuf, L_PRICES );
+        }
+
+        /*****************************************************************************/
+        /* Determine next part to prompt for and next step.                          */
+        /*****************************************************************************/
+        if( step == (short)PART_NUM )       /* Just got a part number. */
+        {
+            step = (short)QUANTITY;         /* Next get a quantity. */
+            if( step_rtn == STEPBACK )
+            {
+                --ipart;
+            }
+        }
+        else                                /* Just got a quantity. */
+        {
+            step = (short)PART_NUM;         /* Next get a part number. */
+            if( step_rtn == STEPOK )
+            {
+                ++ipart;
+            }
         }
     }
 
