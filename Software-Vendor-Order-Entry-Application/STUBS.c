@@ -31,8 +31,8 @@
 flag inv_find( part, part_desc, p_price, p_ship_wt )
 char part[];                    /* part number to look up (pass in) */
 char part_desc[];               /* description of part (returned) */
-money *p_price;                 /* pointer to unit price of part (returned) */
-short *p_ship_wt;               /* pointer to shipping weight in ounces (returned) */
+money* p_price;                 /* pointer to unit price of part (returned) */
+short* p_ship_wt;               /* pointer to shipping weight in ounces (returned) */
 {
     /*****************************************************************************/
     /* Return typical data to test inv_find()'s callers.                         */
