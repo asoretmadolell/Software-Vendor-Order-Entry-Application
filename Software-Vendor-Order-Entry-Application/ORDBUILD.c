@@ -498,3 +498,143 @@ stepcode step_rtn;
 
     return( step_rtn );
 }
+
+/*****************************************************************************/
+/*                                                                           */
+/* ship_pay()                                                                */
+/*                                                                           */
+/* Prompts for shipping carrier, shipping charges, sales-tax rate, and       */
+/* payment terms. Input these data after items are entered.                  */
+/*                                                                           */
+/*****************************************************************************/
+stepcode ship_pay( step_rtn )
+/*****************************************************************************/
+/* If screen is backed into, step_rtn == STEPBACK;                           */
+/* otherwise step_rtn == STEPOK;                                             */
+/*****************************************************************************/
+stepcode step_rtn;
+{
+    IMPORT char office[], user[], cust_name[], company[], ship_car[], pay_terms[], comment[], scrn_title[];
+    IMPORT money part_total, tax_amt, ship_amt;
+    IMPORT double inp_ship_amt, tax_pcnt;
+    IMPORT char is_resale[];    /* Yes means no sales tax. */
+    IMPORT byte last_part;
+    IMPORT short ship_weights[];
+    IMPORT short tot_weight;
+    short step;
+    char dbuf[ 14 ];
+    byte ipart;
+    enum prompts { SHIP_CAR, SHIP_AMT, TAX, PAY_TERMS, COMMENT, ENDSTEPS };
+
+    /*****************************************************************************/
+    /* Verify that something has been ordered; else return STEPBACK.             */
+    /*****************************************************************************/
+    if( quantities[ 0 ] == 0 || parts[ 0 ][ 0 ] == '\0' )
+    {
+        err_warn( "Nothing ordered:", "" );             /* Give diagnostic. */
+        return( STEPBACK );                             /* Back up to previous screen. */
+    }
+
+    /*****************************************************************************/
+    /* Begin new screen.                                                         */
+    /*****************************************************************************/
+    beg_scrn( user, scrn_title, office, "SHIP, TAX, PAY" );
+    pnt_ship_pay();                                     /* Paint screen. */
+    tput( 4, 30, cust_name );
+    tput( 6, 30, company );
+
+    /*****************************************************************************/
+    /* Sum ship weights and show total (weights in ounces).                      */
+    /*****************************************************************************/
+    for( ipart = tot_weight = 0; ipart <= last_part; ++ipart )
+    {
+        tot_weight += ship_weights[ ipart ];
+    }
+    ntput( 9, 30, (long)tot_weight, dbuf, 10 );         /* Show total weight. */
+
+    /*****************************************************************************/
+    /* Begin at last prompt if screen backed into.                               */
+    /*****************************************************************************/
+    step = ( step_rtn == STEPOK ) ? 0 : (short)ENDSTEPS - 1;
+
+    for( step_rtn == STEPOK; step_rtn != STEPCANC && ( step < (short)ENDSTEPS ) && step >= 0; )
+    {
+        switch( step )
+        {
+            /*****************************************************************************/
+            /* Get shipping carrier.                                                     */
+            /*****************************************************************************/
+            case SHIP_CAR:
+                step_rtn = prompt( ship_car, "L", 1, L_SHIP_CAR, OPT, 11, 30 );
+                break;
+                
+            /*****************************************************************************/
+            /* Get shipping charges, if a carrier was entered.                           */
+            /*****************************************************************************/
+            case SHIP_AMT:
+                if( ship_car[ 0 ] != '\0' )
+                {
+                    step_rtn = fprompt( &inp_ship_amt, "F", 0.20, H_SHIP_AMT, 11, 2, OPT, 11, 65 );
+                    ship_amt = (money)( inp_ship_amt * 100.0 );
+                }
+                break;
+                
+            /*****************************************************************************/
+            /* Get sales-tax percentage.                                                 */
+            /*****************************************************************************/
+            case TAX:
+                /*****************************************************************************/
+                /* If sale is for resale, then don't add sales tax.                          */
+                /*****************************************************************************/
+                if( strchr( "Yy1", is_resale[ 0 ] ) )
+                {
+                    tax_pcnt = 0.0;
+                }
+                /*****************************************************************************/
+                /* Prompt for local tax rate, if any.                                        */
+                /*****************************************************************************/
+                else
+                {
+                    step_rtn = fprompt( &tax_pcnt, "F", 0.0, H_TAX_PCNT, 4, 2, OPT, 14, 30 );
+                }
+                if( step_rtn == STEPOK )
+                {
+                    tax_amt = ( tax_pcnt * part_total ) / 100;
+                }
+
+                tput( 14, 64, "$" );
+                ftput( 14, 65, (double)tax_amt / 100.0, 2, dbuf, L_TAX_AMT );
+                ftput( 18, 65, (double)part_total / 100.0, 2, dbuf, L_PRICES );
+                ftput( 20, 65, (double)( part_total + tax_amt + ship_amt ) / 100.0, 2, dbuf, L_PRICES );
+                break;
+                
+            /*****************************************************************************/
+            /* Get payment terms code.                                                   */
+            /*****************************************************************************/
+            case PAY_TERMS:
+                step_rtn = prompt( pay_terms, "L", 1, L_PAY_TERMS, MAND, 17, 30 );
+                break;
+                
+            /*****************************************************************************/
+            /* Get order comment (if any).                                               */
+            /*****************************************************************************/
+            case COMMENT:
+                step_rtn = prompt( comment, "L", 1, L_COMMENT, OPT, 22, 11 );
+                break;
+        }
+
+        /*****************************************************************************/
+        /* Determine next step based on return from last one. Last was successful?   */
+        /*****************************************************************************/
+        if( step_rtn == STEPOK )
+        {
+            ++step;                     /* Yes; go on to next step. */
+        }
+        else if( step_rtn == STEPBACK )
+        {
+            --step;                     /* No; back up to last step. */
+        }
+    }
+
+    return( step_rtn );
+}
