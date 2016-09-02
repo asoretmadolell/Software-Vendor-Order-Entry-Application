@@ -66,3 +66,30 @@ char password[];                /* password to be looked up */
 
     return( user[ 0 ] == 'S' && password[ 0 ] == 'S' );
 }
+
+/*****************************************************************************/
+/*                                                                           */
+/* order_num()                                                               */
+/*                                                                           */
+/* Returns the order number to use for the next order. The order number      */
+/* is a counter that increases by one with each order.                       */
+/*                                                                           */
+/*****************************************************************************/
+long order_num()
+{
+    return( 10001L );
+}
+
+/*****************************************************************************/
+/*                                                                           */
+/* logentry()                                                                */
+/*                                                                           */
+/* Appends message text to the end of the log file, typically for audit,     */
+/* error detection, and security purposes.                                   */
+/*                                                                           */
+/*****************************************************************************/
+void logentry( msg )
+char msg[];
+{
+
+}

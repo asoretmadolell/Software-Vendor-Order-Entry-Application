@@ -638,3 +638,133 @@ stepcode step_rtn;
 
     return( step_rtn );
 }
+
+/*****************************************************************************/
+/*                                                                           */
+/* wrt_ord()                                                                 */
+/*                                                                           */
+/* Writes an order to standard output afer asking if all is OK. The order    */
+/* number is assigned from a counter.                                        */
+/*                                                                           */
+/*****************************************************************************/
+/*                                                                           */
+/* File data to be output are written to the standard output file (stdout).  */
+/* This permits data to be redirected at the command line. For example:      */
+/*                                                                           */
+/*    ORDENTRY > SS841225.ORD           Creates new file;                    */
+/*                                          note date encoded in name.       */
+/*    ORDENTRY >> NEWORDS.DAT           Appends data to file.                */
+/*    ORDENTRY | ORDSAVE | ORDPRINT     Serves as source for a pipeline.     */
+/*                                                                           */
+/* This standard file use scheme gives flexibility in the way the program    */
+/* may be used. Text and control characters are output to the standard       */
+/* error file (stderr), so they won't appear in the redirected output.       */
+/*                                                                           */
+/*****************************************************************************/
+stepcode wrt_ord()
+{
+    /*****************************************************************************/
+    /* IMPORT all the fields of the order.                                       */
+    /*****************************************************************************/
+    IMPORT char
+        office[],
+        user[],
+        cust_name[],
+        company[],
+        ship_name[],
+        ship_cmpy[],
+        ship_strt[],
+        ship_strt2[],
+        ship_city[],
+        ship_state[],
+        ship_zip[],
+        bill_name[],
+        bill_cmpy[],
+        bill_strt[],
+        bill_strt2[],
+        bill_city[],
+        bill_state[],
+        bill_zip[],
+        adv_ref[],
+        resale_id[];
+    IMPORT char is_resale[];                    /* Yes means no sales tax. */
+    IMPORT char parts[][ L_PARTS + 1 ];
+    IMPORT long quantities[];
+    IMPORT money prices[];
+    IMPORT byte last_part;
+    IMPORT short tot_weight;
+    IMPORT char
+        ship_car[],
+        pay_terms[],
+        comment[];
+    IMPORT money
+        part_total,
+        tax_amt,
+        ship_amt;
+    long order_id;                              /* order number, from order_num() */
+    long long_time;                             /* time of day, from time() */
+    byte ipart;
+    char is_ok[ 2 ];                            /* Are data OK? message buffer */
+    char log_buf[ 80 ];                         /* buffer for logentry() string */
+    stepcode step_rtn;
+
+    /*****************************************************************************/
+    /* Ask if order is OK.                                                       */
+    /*****************************************************************************/
+    tput( 23, 2, "Is order OK? <y/n>  _ " );
+    strcpy( is_ok, "y" );                       /* Default is yes. */
+    step_rtn = prompt( is_ok, "Q", 1, 1, MAND, 23, 22 );
+
+    if( step_rtn != STEPOK )
+    {
+        return( step_rtn );
+    }
+    else if( 0 != strchr( "Nn0", is_ok[ 0 ] ) )
+    {
+        return ( STEPBACK );
+    }
+
+    /*****************************************************************************/
+    /* Write order data to standard output. Each line begins with two uppercase  */
+    /* characters or numbers that indicate the meaning of that data item.        */
+    /*****************************************************************************/
+    order_id = order_num();
+    sprintf( log_buf, "ORD %ld, SL %s, TL %ld", order_id, user, part_total );
+    logentry( log_buf );                            /* Record order in log file as an audit trail for sales and commisions. */
+    printf( "\nBEGIN ORDER %ld\n", order_id );
+    time( &long_time );                             /* Get time of day as a long. */
+    printf( "TM %s", ctime( &long_time ) );         /* Save time of day. */
+
+    printf( "OF %s\nSL %s\nCN %s\nCO %s\n", office, user, cust_name, company );
+    printf( "SN %s\nSC %s\nST %s\n", ship_name, ship_cmpy, ship_strt );
+    if( ship_strt2[ 0 ] != '\0' ) printf( "S2 %s\n", ship_strt2 );
+    printf( "SY %s\nSS %s\nSZ %s\n", ship_city, ship_state, ship_zip );
+
+    if( bill_name[ 0 ] != '\0' )                    /* Save billing address if different. */
+    {
+        printf( "BN %s\nBC %s\nBT %s\n", bill_name, bill_cmpy, bill_strt );
+        if( bill_strt2[ 0 ] != '\0' ) printf( "B2 %s\n", bill_strt2 );
+        printf( "BY %s\nBS %s\nBZ %s\n", bill_city, bill_state, bill_zip );
+    }
+
+    if( strchr( "Yy1", is_resale[ 0 ] ) )           /* Is order for resale? */
+    {
+        printf( "RS %s\n", resale_id );             /* Yes; save resale_id. */
+    }
+
+    /*****************************************************************************/
+    /* List each part, quantity, and price.                                      */
+    /*****************************************************************************/
+    for( ipart = 0; ipart <= last_part && quantities[ ipart ]; ++ipart )
+    {
+        printf( "PN %s\nQY %ld\nPR %ld\n", parts[ ipart ], quantities[ ipart ], prices[ ipart ] );
+    }
+
+    printf( "TL %ld\nTX %ld\nSH %s\nSA %ld\nWT %d\n", part_total, tax_amt, ship_car, ship_amt, tot_weight );
+
+    if( adv_ref[ 0 ] != '\0' ) printf( "AD %s\n", adv_ref );
+    printf( "PA %s\n", pay_terms );
+    if( comment[ 0 ] != '\0' ) printf( "CM %s\n", comment );
+    printf( "END ORDER %ld\n", order_id );
+    return( STEPOK );
+}
