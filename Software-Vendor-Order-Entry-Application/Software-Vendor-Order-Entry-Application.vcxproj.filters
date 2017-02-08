@@ -74,5 +74,11 @@
     <ClCompile Include="ERR_WARN.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PW_FIND.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LOGENTRY.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

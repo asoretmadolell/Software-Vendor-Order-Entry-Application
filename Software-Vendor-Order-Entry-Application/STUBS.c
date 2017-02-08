@@ -55,17 +55,3 @@ long order_num()
 {
     return( 10001L );
 }
-
-/*****************************************************************************/
-/*                                                                           */
-/* logentry()                                                                */
-/*                                                                           */
-/* Appends message text to the end of the log file, typically for audit,     */
-/* error detection, and security purposes.                                   */
-/*                                                                           */
-/*****************************************************************************/
-void logentry( msg )
-char msg[];
-{
-
-}
