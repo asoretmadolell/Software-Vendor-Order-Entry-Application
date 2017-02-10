@@ -42,16 +42,3 @@ short* p_ship_wt;               /* pointer to shipping weight in ounces (returne
     *p_ship_wt = 123;
     return ( part[0] == 'S' );    /* YES if 'S' first, else NO */
 }
-
-/*****************************************************************************/
-/*                                                                           */
-/* order_num()                                                               */
-/*                                                                           */
-/* Returns the order number to use for the next order. The order number      */
-/* is a counter that increases by one with each order.                       */
-/*                                                                           */
-/*****************************************************************************/
-long order_num()
-{
-    return( 10001L );
-}

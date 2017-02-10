@@ -82,6 +82,7 @@
     <ClCompile Include="ORDENTRY.c" />
     <ClCompile Include="ORDBUILD.c" />
     <ClCompile Include="GET_ADDR.c" />
+    <ClCompile Include="ORDERNUM.c" />
     <ClCompile Include="PNT_ID_C.c" />
     <ClCompile Include="PNT_SHIP.c" />
     <ClCompile Include="PROMPT.c" />
