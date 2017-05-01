@@ -94,6 +94,7 @@
     <ClCompile Include="MATCH.c" />
     <ClCompile Include="ERR_WARN.c" />
     <ClCompile Include="PW_FIND.c" />
+    <ClCompile Include="STRFLD.c" />
     <ClCompile Include="STRRJUST.c" />
     <ClCompile Include="TPUT.c" />
     <ClCompile Include="STUBS.c" />
