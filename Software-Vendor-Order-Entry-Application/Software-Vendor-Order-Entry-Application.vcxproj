@@ -78,6 +78,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BLDINDEX.c" />
     <ClCompile Include="LOGENTRY.c" />
     <ClCompile Include="ORDENTRY.c" />
     <ClCompile Include="ORDBUILD.c" />
