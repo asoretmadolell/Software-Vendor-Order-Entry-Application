@@ -89,5 +89,8 @@
     <ClCompile Include="BLDINDEX.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="INVMAINT.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
