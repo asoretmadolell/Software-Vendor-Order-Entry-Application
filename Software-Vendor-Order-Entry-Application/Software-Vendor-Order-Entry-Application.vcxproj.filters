@@ -41,9 +41,6 @@
     <ClCompile Include="PNT_SHIP.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="STUBS.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PROMPT.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,6 +87,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="INVMAINT.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="INV_FIND.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

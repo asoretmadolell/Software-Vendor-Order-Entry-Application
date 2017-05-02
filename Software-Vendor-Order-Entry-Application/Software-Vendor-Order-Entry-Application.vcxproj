@@ -99,7 +99,7 @@
     <ClCompile Include="STRFLD.c" />
     <ClCompile Include="STRRJUST.c" />
     <ClCompile Include="TPUT.c" />
-    <ClCompile Include="STUBS.c" />
+    <ClCompile Include="INV_FIND.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ORDENTRY.h" />
