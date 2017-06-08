@@ -6,49 +6,51 @@
 /*                                                                           */
 /* Description:                                                              */
 /*                                                                           */
-/* strfld() copies a field from a record to a separate string and returns    */
-/* the starting address of the target, to_str.                               */
+/* strfld() copies a field from a record string to a separate string and     */
+/* returns the starting address of the target, to_str. (A record here is a   */
+/* string containing fields separated by DELIM.)                             */
 /*                                                                           */
 /*****************************************************************************/
 
 #define DELIM '|'               /* delimeter to separate fields of a record */
 
-char *strfld( to_str, from_rec, fld_num )
-char to_str[];                  /* target string to copy field to */
-char from_rec[];                /* record string to copy field from */
+char *strfld( from_rec, fld_num, to_str )
+register char from_rec[];       /* record string to copy field from */
 short fld_num;                  /* field number to copy */
+register char *to_str;          /* target string to copy field to */
 {
     /*****************************************************************************/
-    /* indices into from_rec and to_str                                          */
+    /* hold initial value for return.                                            */
     /*****************************************************************************/
-    short ifrom, ito;
+    char *p_to_str = to_str;
 
     /*****************************************************************************/
-    /* Skip over ( fld_num - 1 ) delimeters to the field to copy.                */
+    /* Skip to field to copy.                                                    */
     /*****************************************************************************/
-    for( ifrom = 0; --fld_num && from_rec[ ifrom ] != '\0'; )
+    while( --fld_num && *from_rec != '\0' )
     {
-        while( from_rec[ ifrom ] != '\0' && from_rec[ ifrom ] != DELIM )
+        while( *from_rec != '\0' && *from_rec != DELIM )
         {
-            ++ifrom;
+            ++from_rec;
         }
-        if( from_rec[ ifrom ] == DELIM )
+        if( *from_rec == DELIM )
         {
-            ++ifrom;
+            ++from_rec;
         }
     }
 
     /*****************************************************************************/
     /* Copy field from from_rec to to_str.                                       */
     /*****************************************************************************/
-    for( ito = 0; from_rec[ ifrom ] != '\0' && from_rec[ ifrom ] != '\n' && from_rec[ ifrom ] != DELIM; ++ifrom, ++ito )
+    while( *from_rec != '\0' && *from_rec != DELIM )
     {
         /*****************************************************************************/
-        /* Copy a character to to_str                                                */
+        /* Copy a character to to_str and increment pointers.                        */
         /*****************************************************************************/
-        to_str[ ito ] = from_rec[ ifrom ];
+        *to_str++ = *from_rec++;
     }
-    to_str[ ito ] = '\0';
 
-    return( &to_str[ 0 ] );
+    to_str = '\0';
+
+    return( p_to_str );
 }
